@@ -1,5 +1,3 @@
-# DataViz_Project_2
-
 # Planet Deforestation over Time and Species Density
 
 ## APIs Used
