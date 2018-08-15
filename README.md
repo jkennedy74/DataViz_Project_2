@@ -1,5 +1,13 @@
 # Planet Deforestation over Time and Species Density
 
+In this project we will demonstrate the relationships between Deforestation and Species Density over time.
+
+## Dimensions to Explore
+ - Time
+ - Geo
+ - ???
+
+
 ## APIs Used
 
 ### Tree Cover Gain and Tree Cover Loss
@@ -15,11 +23,10 @@
  -  http://restcountries.eu/#api-endpoints-response-example
 
   
+## Libraries Used
+ - Flask
+ - Leaflet
+ - D3
+ - etc
 
-Demonstrate the rise and fall of species density with the rise and fall of tree cover.
-
-## Dimensions to Explore
- - Time
- - Geo
- - ???
 
