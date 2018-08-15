@@ -1,6 +1,6 @@
 # Planet Deforestation over Time and Species Density
 
-In this project we will demonstrate the relationships between Deforestation and Species Density over time.
+In this project we will demonstrate the relationships between global deforestation and species density over time.
 
 ## Dimensions to Explore
  - Time
