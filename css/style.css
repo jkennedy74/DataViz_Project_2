@@ -12,6 +12,8 @@ font-family: 'Roboto Mono', monospace;
   background-size: cover;
   -o-background-size: cover;
   text-transform: uppercase;
+    color: bisque;
+
 }
 
 h1 {
@@ -21,10 +23,9 @@ h1 {
 
 .card {
   background-color: black;
-  opacity: .7;
-  color: bisque;
-  height: 100%;
-  width: 100%;
+  opacity: .8;
+  height: 820px;
+  vertical-align: -webkit-baseline-middle;
 }
 
 
