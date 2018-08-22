@@ -49,35 +49,53 @@ var overlays = {
 // layer control for the map
 L.control.layers(baseLayers, overlays).addTo(map);
 
-function buildMetadata(s_class) {
+// markers overlay for animal density
+function buildGeoJson(s_class) {
 
-  var url = `/metadata/${s_class}`
+  var url = `/geojson/${s_class}`
 
   console.log("---- buildMetadata initiated ----")
 
-  // Use `d3.json` to fetch the metadata for a sample
-  d3.json(url).then(function(response) {
-   
-    // Creating a new marker cluster group
-  var markers = L.markerClusterGroup();
+  // Use `d3.json` to fetch the metadata for a animal class
+  d3.json(url).then(function(data) {
+    console.log(`features: ${data.features.length}`)
+    // code for the leaflet timeline plugin
+    
+    // time interval
+    var getInterval = function(animal) {
+      return {
+        start: animal.properties.start,
+        end:   animal.properties.end
+      };
+    };
+    
+    // timeline slider
+    var timelineControl = L.timelineSliderControl({
+      steps: 100,
+      formatOutput: function(date) {
+        return moment(date * 1000).format('YYYY-MM-DD');
+      }
+    });
 
-  // Loop through our data...
-  for (var i = 0; i < response.length; i++) {
-    // set the data location property to a variable
-    var Latitude = parseInt(response[i].Latitude);
-    var Longitude = parseInt(response[i].Longitude);
+    // timeline markers
+    var timeline = L.timeline(data, {
+      getInterval: getInterval,
+      pointToLayer: function(data, latlng){
+        var markers = L.markerClusterGroup();
+        markers.addLayer(L.marker(latlng)
+          .bindPopup(data.properties.year));
+        return markers
+      }
+    });
 
-    // Add a new marker to the cluster group and bind a pop-up
-    markers.addLayer(L.marker([Latitude, Longitude])
-      .bindPopup(response[i].Class));
-
-  }
-  // Add our marker cluster layer to the map
-  map.addLayer(markers);
-
+    // add the timeline to the map
+    timelineControl.addTo(map);
+    timelineControl.addTimelines(timeline);
+    timeline.addTo(map);
+    // markers.addTo(map);
   });
 }
 
-// var s_class = "Amphibia";
+var s_class = "Reptilia";
 
-// buildMetadata(s_class);
+buildGeoJson(s_class);

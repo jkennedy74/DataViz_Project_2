@@ -13,6 +13,8 @@ from flask_sqlalchemy import SQLAlchemy
 
 import numpy as np
 import pandas as pd
+import time
+import datetime
 
 #################################################
 # Flask Setup
@@ -72,13 +74,14 @@ def classes():
 
     return jsonify(class_names)
 
-# route for returning sample metadata
-@app.route("/metadata/<s_class>")
-def animal_metedata(s_class):
+# route for returning animal geojson
+@app.route("/geojson/<s_class>")
+def animal_geojson(s_class):
     """Return the MetaData for a given sample."""
 
     # Selection to query
     sel = [
+        Animals.id,
         Animals.eventDate, 
         Animals.country,
         Animals.decimalLatitude,
@@ -86,25 +89,43 @@ def animal_metedata(s_class):
         Animals.s_class]
 
     # results of the query
-    results = db.session.query(*sel).filter(Animals.s_class==s_class)
+    results = db.session.query(*sel).filter(Animals.s_class==s_class).order_by(Animals.eventDate)
 
     # empty list to append data to
-    metadata = []
+    FeatureCollection = {"type": "FeatureCollection",
+                "metadata": {
+                "title": "Animal Counts"
+                }}
+
+    Features = []
 
     # loop to append relevant data
     for result in results:
-        if result[2] != "" and result[3] != "":
-            info = {
-                "Year": result[0][0:4],
-                "Country": result[1],
-                "Latitude": result[2],
-                "Longitude": result[3],
-                "Class": result[4]
+        if result[3] != "" and result[4] != "" and int(result[1][0:4]) > 1999 and int(result[1][0:4]) < 2013:
+            feature = {
+                "type": "Feature",
+                "properties": {
+                "place": result[2],
+                "year": result[1][0:4],
+                "start": time.mktime(datetime.datetime.strptime(f"{int(result[1][0:4])}-01-01", "%Y-%m-%d").timetuple()),
+                "end": time.mktime(datetime.datetime.strptime(f"{int(result[1][0:4])}-12-31", "%Y-%m-%d").timetuple()),
+                "type": result[5]
+                },
+                "geometry": {
+                "type": "Point",
+                "coordinates": [
+                float(result[4]),
+                float(result[3])
+                ]
+                },
+                "id": int(result[0])
             }
+            
+            Features.append(feature)
 
-            metadata.append(info)
+    FeatureCollection["features"] = Features
 
-    return jsonify(metadata)
+    return jsonify(FeatureCollection)
 
 # route for returning sample metadata
 @app.route("/year/<s_class>")
@@ -139,4 +160,3 @@ def animal_year(s_class):
 
 if __name__ == "__main__":
     app.run(debug=True)
-
