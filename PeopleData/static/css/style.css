@@ -1,24 +1,12 @@
-#map-id {
-  height: 100%;
-  padding: 0;
-  margin: 0;
+h1 {
+    text-align: center;
 }
 
-.legend {
-    line-height: 18px;
-    background-color: white;
-    padding: 10px;
-}
-.legend i {
-    width: 18px;
-    height: 18px;
-    float: left;
-    margin-right: 8px;
-    opacity: 0.7;
-}
 p{
     text-align: center;
-    font-size: 30px;
-    font-family: 'Times New Roman', Times, serif;
-
+}
+.line {
+   fill: none;
+   stroke: green;
+   stroke-width: 5px;
 }

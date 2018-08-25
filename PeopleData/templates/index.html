@@ -1,18 +1,90 @@
-<DOCTYPE html>
+<!DOCTYPE html>
   
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <title>People_Data</title>
+  <html>
+    <head>
+      <title>PeopleData</title>
+      <link rel='stylesheet' href='../static/css/style.css' />
+      
+      <!-- Bootstrap core CSS -->
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+      <link href="https://bootswatch.com/4/sandstone/bootstrap.min.css" rel="stylesheet">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+      <!-- <style> 
+          .line {
+             fill: none;
+             stroke: green;
+             stroke-width: 5px;
+          }
+       </style>   -->
+          
   
-  <link rel="stylesheet" href="../static/css/style.css">
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.13.0/d3.min.js"></script>
+      <!-- Load d3.js-->
+      
+      <script type = "text/javascript" src = "https://d3js.org/d3.v4.min.js"></script>
+ 
+      <!-- Load papaparse.js -->
+      <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.6.0/papaparse.min.js"></script> -->
+      </head>
+      <body>
+        <br><br><br>
+        <!--div class="container"> -->
+         <div> <h1>People Data visualization using D3</h1></div>
+        <!--<div id = "scatter-plot-chart"></div> -->
+        <script>
+        var margin = {top: 20, right: 20, bottom: 30, left: 50},
+         width = 960 - margin.left - margin.right,
+         height = 500 - margin.top - margin.bottom;
 
-</head>
-<body>
-	<script src="../static/js/motolsapp.js"></script>
-</body>
+         // set the ranges
+         var x = d3.scaleTime().range([0, width]);
+         var y = d3.scaleLinear().range([height, 0]);
+
+         // define the line
+         var valueline = d3.line()
+            .x(function(d) { return x(d.YearStart); })
+            .y(function(d) { return y(d.DataValueAlt); });
+
+         // append the svg obgect to the body of the page
+         // appends a 'group' element to 'svg'
+         // moves the 'group' element to the top left margin
+         var svg = d3.select("body").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g").attr("transform",
+               "translate(" + margin.left + "," + margin.top + ")");
+
+         // Get the data
+         d3.csv("UsChronicD.csv", function(error, UsChronicD) {
+            if (error) throw error;
+            // format the data
+            UsChronicD.forEach(function(d) {
+               d.YearStart = +d.YearStart;
+               d.DataValueAlt = +d.DataValueAlt;
+            });
+
+            // Scale the range of the data
+            x.domain(d3.extent(UsChronicD, function(d) { return d.YearStart; }));
+            y.domain([0, d3.max(UsChronicD, function(d) { return d.DataValueAlt; })]);
+
+            // Add the valueline path.
+            svg.append("path")
+               .data([UsChronicD])
+               .attr("class", "line")
+               .attr("d", valueline);
+
+            // Add the X Axis
+            svg.append("g")
+               .attr("transform", "translate(0," + height + ")")
+               .call(d3.axisBottom(x));
+
+            // Add the Y Axis
+            svg.append("g")
+               .call(d3.axisLeft(y));
+         });        
+        </script>
+      </body>
+      
+      <br><br><br>
 <p>&copy;Motolani Abisola Alimi</p>
 </html>
 
